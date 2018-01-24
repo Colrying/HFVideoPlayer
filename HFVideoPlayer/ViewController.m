@@ -44,8 +44,10 @@
     aView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.3];
     aView.frame = CGRectMake(CGRectGetMinX(videoPlay.bounds), CGRectGetMinY(videoPlay.bounds), CGRectGetWidth(videoPlay.bounds), CGRectGetHeight(videoPlay.bounds));
     [videoPlay addSubview:aView];
+    // 这两行代码使为了让aView随着videoPlay的变化而变化
     aView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     aView.contentMode = UIViewContentModeScaleAspectFit;
+    // 让播放视频视图处于控制视图下方
     [videoPlay sendSubviewToBack:aView];
     _aView = aView;
     
