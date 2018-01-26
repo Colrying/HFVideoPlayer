@@ -79,6 +79,23 @@
     NSLog(@"改变进度");
 }
 
+-(void)videoPlayerControlDidChangeVolumeUp:(HFVideoPlayerControlView *)videoPlayerController {
+    NSLog(@"音量增加");
+}
+
+- (void)videoPlayerControlDidChangeVolumeDown:(HFVideoPlayerControlView *)videoPlayerController {
+    NSLog(@"音量减少");
+}
+
+- (void)videoPlayerControlDidChangeBrightnessUp:(HFVideoPlayerControlView *)videoPlayerController {
+    NSLog(@"亮度增加");
+    [UIScreen mainScreen].brightness += 0.005;
+}
+
+- (void)videoPlayerControlDidChangeBrightnessDown:(HFVideoPlayerControlView *)videoPlayerController {
+    NSLog(@"亮度减少");
+    [UIScreen mainScreen].brightness -= 0.005;
+}
 
 - (BOOL)shouldAutorotate {
     return NO;

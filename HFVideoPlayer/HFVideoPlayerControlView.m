@@ -16,7 +16,10 @@ static const CGFloat kVideoControlTimeLabelFontSize = 10.0;
 static const CGFloat kVideoControlBarAutoFadeOutTimeInterval = 5.0;
 static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
 
-@interface HFVideoPlayerControlView ()
+@interface HFVideoPlayerControlView () <UIGestureRecognizerDelegate>
+{
+    CGPoint _currentPoint;
+}
 
 @property (nonatomic, strong) UIView *topBar;
 @property (nonatomic, strong) UIView *bottomBar;
@@ -33,6 +36,7 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
 @property (nonatomic, assign) BOOL isBarShowing;
 @property (nonatomic, assign) BOOL isFullscreenMode;
 @property (nonatomic, assign) CGRect originFrame;
+
 @end
 
 @implementation HFVideoPlayerControlView
@@ -58,6 +62,9 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
         self.shrinkScreenButton.hidden = YES;
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
         [self addGestureRecognizer:tapGesture];
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureDown:)];
+        panGesture.delegate = self;
+        [self addGestureRecognizer:panGesture];
         [self configControlAction];
     }
     return self;
@@ -65,6 +72,7 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
 
 - (void)layoutSubviews {
     [super layoutSubviews];
+    
     
     CGFloat topBarTop = self.isFullscreenMode ? CGRectGetMinY(self.bounds)+15 : CGRectGetMinY(self.bounds);
     self.topBar.frame = CGRectMake(CGRectGetMinX(self.bounds), topBarTop, CGRectGetWidth(self.bounds), kVideoControlBarHeight);
@@ -253,8 +261,123 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
     [_pauseButton setImage:[UIImage imageNamed:pauseImgName] forState:UIControlStateNormal];
     _playButton.bounds = CGRectMake(0, 0, playWH, playWH);
     _pauseButton.bounds = CGRectMake(0, 0, playWH, playWH);
+}
+
+#pragma mark ===== 手势 =====
+-(BOOL)gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldReceiveTouch:(UITouch*)touch{
     
+    if([touch.view isKindOfClass:[UISlider class]]){
+        return NO;
+    }else{
+        return YES;
+    }
+}
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    _currentPoint = [[touches anyObject] locationInView:self];
+    NSLog(@"_currentPoint:== %f", _currentPoint.y);
+}
+
+-(void)panGestureDown:(UIPanGestureRecognizer*)sender{
     
+    if(_isFullscreenMode == NO){
+        return;// 只有横屏才可以添加手势
+    }
+    
+    CGPoint point= [sender locationInView:self];// 上下控制点
+    
+    typedef NS_ENUM(NSUInteger, UIPanGestureRecognizerDirection) {
+        UIPanGestureRecognizerDirectionUndefined,
+        UIPanGestureRecognizerDirectionUp,
+        UIPanGestureRecognizerDirectionDown,
+        UIPanGestureRecognizerDirectionLeft,
+        UIPanGestureRecognizerDirectionRight
+    };
+    static UIPanGestureRecognizerDirection direction = UIPanGestureRecognizerDirectionUndefined;
+    switch (sender.state) {
+        case UIGestureRecognizerStateBegan: {
+            NSLog(@"手势开始");
+            if (direction == UIPanGestureRecognizerDirectionUndefined) {
+                CGPoint velocity = [sender velocityInView:self];
+                BOOL isVerticalGesture = fabs(velocity.y) > fabs(velocity.x);
+                if (isVerticalGesture) {
+                    if (velocity.y > 0) {
+                        direction = UIPanGestureRecognizerDirectionDown;
+                    } else {
+                        direction = UIPanGestureRecognizerDirectionUp;
+                    }
+                }
+                else {
+                    if (velocity.x > 0) {
+                        direction = UIPanGestureRecognizerDirectionRight;
+                    } else {
+                        direction = UIPanGestureRecognizerDirectionLeft;
+                    }
+                }
+            }
+            break;
+        }
+        case UIGestureRecognizerStateChanged: {
+            float dy = point.y - _currentPoint.y;
+            
+            int index = (int)dy;
+            
+            // 左侧 上下改变亮度
+            if(_currentPoint.x < self.bounds.size.width/2){
+                
+                if(index > 0){
+                    [self setBrightnessDown];
+                }else{
+                    [self setBrightnessUp];
+                }
+                
+            }else{// 右侧上下改变声音
+                
+                if(index>0){
+                    [self setVolumeDown];
+                }else{
+                    [self setVolumeUp];
+                }
+                
+            }
+            break;
+        }
+        case UIGestureRecognizerStateEnded: {
+            
+            direction = UIPanGestureRecognizerDirectionUndefined;
+            
+            break;
+        }
+        default:
+            break;
+    }
+    
+    _currentPoint = point;
+    
+}
+
+- (void)setVolumeUp
+{
+    if ([self.delegate respondsToSelector:@selector(videoPlayerControlDidChangeVolumeUp:)]) {
+        [self.delegate videoPlayerControlDidChangeVolumeUp:self];
+    }
+}
+
+-(void)setVolumeDown{
+    if ([self.delegate respondsToSelector:@selector(videoPlayerControlDidChangeVolumeDown:)]) {
+        [self.delegate videoPlayerControlDidChangeVolumeDown:self];
+    }
+}
+
+- (void)setBrightnessUp {
+    if ([self.delegate respondsToSelector:@selector(videoPlayerControlDidChangeBrightnessUp:)]) {
+        [self.delegate videoPlayerControlDidChangeBrightnessUp:self];
+    }
+}
+
+- (void)setBrightnessDown {
+    if ([self.delegate respondsToSelector:@selector(videoPlayerControlDidChangeBrightnessDown:)]) {
+        [self.delegate videoPlayerControlDidChangeBrightnessDown:self];
+    }
 }
 
 #pragma mark ===== 全屏 or 小屏 =====
@@ -405,6 +528,9 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
     }
     return _coverImageView;
 }
+
+
+
 
 #pragma mark - Private Method
 

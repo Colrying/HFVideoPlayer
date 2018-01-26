@@ -11,12 +11,17 @@
 @class HFVideoPlayerControlView;
 @protocol HFVideoPlayerControlViewDelegate <NSObject>
 
+@optional
 - (void)videoPlayerControlDidCloseClick:(HFVideoPlayerControlView *)videoPlayerController;
 - (void)videoPlayerControlDidPlayClick:(HFVideoPlayerControlView *)videoPlayerController;
 - (void)videoPlayerControlDidPauseClick:(HFVideoPlayerControlView *)videoPlayerController;
 - (void)videoPlayerControlDidEnterFullScreenClick:(HFVideoPlayerControlView *)videoPlayerController;
 - (void)videoPlayerControlDidShrinkFullScreenClick:(HFVideoPlayerControlView *)videoPlayerController;
 - (void)videoPlayerControlDidChangeProgressValue:(HFVideoPlayerControlView *)videoPlayerController;
+- (void)videoPlayerControlDidChangeVolumeUp:(HFVideoPlayerControlView *)videoPlayerController;
+- (void)videoPlayerControlDidChangeVolumeDown:(HFVideoPlayerControlView *)videoPlayerController;
+- (void)videoPlayerControlDidChangeBrightnessUp:(HFVideoPlayerControlView *)videoPlayerController;
+- (void)videoPlayerControlDidChangeBrightnessDown:(HFVideoPlayerControlView *)videoPlayerController;
 
 @end
 
