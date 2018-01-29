@@ -31,7 +31,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.view.backgroundColor = [UIColor whiteColor];
     HFVideoPlayerControlView *videoPlay = [[HFVideoPlayerControlView alloc] initWithFrame:CGRectMake(0, 64, self.view.bounds.size.width, self.view.bounds.size.width*9/16)];
     videoPlay.delegate = self;
     videoPlay.currentTimeLabel.text = @"12:59:59";
@@ -69,11 +69,11 @@
 }
 - (void)videoPlayerControlDidEnterFullScreenClick:(HFVideoPlayerControlView *)videoPlayerController {
     NSLog(@"进入全屏");
-    
+    [videoPlayerController showInWindow];
 }
 - (void)videoPlayerControlDidShrinkFullScreenClick:(HFVideoPlayerControlView *)videoPlayerController {
     NSLog(@"取消全屏");
-    
+    [videoPlayerController showInView:self.view];
 }
 - (void)videoPlayerControlDidChangeProgressValue:(HFVideoPlayerControlView *)videoPlayerController {
     NSLog(@"改变进度");
@@ -100,6 +100,7 @@
 - (BOOL)shouldAutorotate {
     return NO;
 }
+
 
 
 - (void)didReceiveMemoryWarning {

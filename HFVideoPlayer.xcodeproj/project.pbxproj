@@ -16,6 +16,7 @@
 		A2692961201824AD006CDBB4 /* HFVideoPlayerControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = A2692960201824AD006CDBB4 /* HFVideoPlayerControlView.m */; };
 		A269299520186D9B006CDBB4 /* HFVideoPlayerResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A269299420186D9B006CDBB4 /* HFVideoPlayerResource.bundle */; };
 		A269299920188429006CDBB4 /* 16091G34I9-6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A269299820188429006CDBB4 /* 16091G34I9-6.jpg */; };
+		A2744294201EC0750065AAF4 /* UINavigationController+Orientation.m in Sources */ = {isa = PBXBuildFile; fileRef = A2744293201EC0750065AAF4 /* UINavigationController+Orientation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,8 @@
 		A2692960201824AD006CDBB4 /* HFVideoPlayerControlView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HFVideoPlayerControlView.m; sourceTree = "<group>"; };
 		A269299420186D9B006CDBB4 /* HFVideoPlayerResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HFVideoPlayerResource.bundle; sourceTree = "<group>"; };
 		A269299820188429006CDBB4 /* 16091G34I9-6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "16091G34I9-6.jpg"; sourceTree = "<group>"; };
+		A2744292201EC0750065AAF4 /* UINavigationController+Orientation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+Orientation.h"; sourceTree = "<group>"; };
+		A2744293201EC0750065AAF4 /* UINavigationController+Orientation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+Orientation.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +76,8 @@
 				A269294620182242006CDBB4 /* AppDelegate.m */,
 				A269294820182242006CDBB4 /* ViewController.h */,
 				A269294920182242006CDBB4 /* ViewController.m */,
+				A2744292201EC0750065AAF4 /* UINavigationController+Orientation.h */,
+				A2744293201EC0750065AAF4 /* UINavigationController+Orientation.m */,
 				A269294B20182242006CDBB4 /* Main.storyboard */,
 				A269294E20182242006CDBB4 /* Assets.xcassets */,
 				A269295020182242006CDBB4 /* LaunchScreen.storyboard */,
@@ -159,6 +164,7 @@
 				A269295520182242006CDBB4 /* main.m in Sources */,
 				A269294720182242006CDBB4 /* AppDelegate.m in Sources */,
 				A2692961201824AD006CDBB4 /* HFVideoPlayerControlView.m in Sources */,
+				A2744294201EC0750065AAF4 /* UINavigationController+Orientation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

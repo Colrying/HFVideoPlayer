@@ -98,4 +98,8 @@
 - (void)autoFadeOutControlBar;
 - (void)cancelAutoFadeOutControlBar;
 
+
+- (void)showInWindow;
+- (void)showInView:(UIView *)view;
+
 @end

@@ -193,6 +193,12 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
     if (self.isFullscreenMode) {
         return;
     }
+    
+    if ([self.delegate respondsToSelector:@selector(videoPlayerControlDidEnterFullScreenClick:)]) {
+        [self.delegate videoPlayerControlDidEnterFullScreenClick:self];
+    }
+    return;
+    
     [self.superview bringSubviewToFront:self];
     self.isFullscreenMode = YES;
     self.originFrame = self.frame;
@@ -219,6 +225,10 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
     if (!self.isFullscreenMode) {
         return;
     }
+    if ([self.delegate respondsToSelector:@selector(videoPlayerControlDidShrinkFullScreenClick:)]) {
+        [self.delegate videoPlayerControlDidShrinkFullScreenClick:self];
+    }
+    return;
     
     self.isFullscreenMode = NO;
     [UIView animateWithDuration:kVideoControlAnimationTimeInterval animations:^{
@@ -263,7 +273,7 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
     _pauseButton.bounds = CGRectMake(0, 0, playWH, playWH);
 }
 
-#pragma mark ===== 手势 =====
+#pragma mark ===== 手势滑动 =====
 -(BOOL)gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldReceiveTouch:(UITouch*)touch{
     
     if([touch.view isKindOfClass:[UISlider class]]){
@@ -272,6 +282,7 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
         return YES;
     }
 }
+
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     _currentPoint = [[touches anyObject] locationInView:self];
     NSLog(@"_currentPoint:== %f", _currentPoint.y);
@@ -285,35 +296,9 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
     
     CGPoint point= [sender locationInView:self];// 上下控制点
     
-    typedef NS_ENUM(NSUInteger, UIPanGestureRecognizerDirection) {
-        UIPanGestureRecognizerDirectionUndefined,
-        UIPanGestureRecognizerDirectionUp,
-        UIPanGestureRecognizerDirectionDown,
-        UIPanGestureRecognizerDirectionLeft,
-        UIPanGestureRecognizerDirectionRight
-    };
-    static UIPanGestureRecognizerDirection direction = UIPanGestureRecognizerDirectionUndefined;
     switch (sender.state) {
         case UIGestureRecognizerStateBegan: {
             NSLog(@"手势开始");
-            if (direction == UIPanGestureRecognizerDirectionUndefined) {
-                CGPoint velocity = [sender velocityInView:self];
-                BOOL isVerticalGesture = fabs(velocity.y) > fabs(velocity.x);
-                if (isVerticalGesture) {
-                    if (velocity.y > 0) {
-                        direction = UIPanGestureRecognizerDirectionDown;
-                    } else {
-                        direction = UIPanGestureRecognizerDirectionUp;
-                    }
-                }
-                else {
-                    if (velocity.x > 0) {
-                        direction = UIPanGestureRecognizerDirectionRight;
-                    } else {
-                        direction = UIPanGestureRecognizerDirectionLeft;
-                    }
-                }
-            }
             break;
         }
         case UIGestureRecognizerStateChanged: {
@@ -342,9 +327,7 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
             break;
         }
         case UIGestureRecognizerStateEnded: {
-            
-            direction = UIPanGestureRecognizerDirectionUndefined;
-            
+            NSLog(@"手势结束");
             break;
         }
         default:
@@ -387,19 +370,39 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
         keyWindow = [[[UIApplication sharedApplication] windows] firstObject];
     }
     [keyWindow addSubview:self];
-    self.alpha = 0.0;
-    [UIView animateWithDuration:kVideoPlayerControllerAnimationTimeInterval animations:^{
-        self.alpha = 1.0;
-    } completion:^(BOOL finished) {}];
+    
+    self.isFullscreenMode = YES;
+    self.originFrame = self.frame;
+    CGFloat height = [[UIScreen mainScreen] bounds].size.width;
+    CGFloat width = [[UIScreen mainScreen] bounds].size.height;
+    CGRect frame = CGRectMake((height - width) / 2, (width - height) / 2, width, height);
+    [UIView animateWithDuration:kVideoControlAnimationTimeInterval animations:^{
+        self.frame = frame;
+        [self setTransform:CGAffineTransformMakeRotation(M_PI_2)];
+        [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientationLandscapeRight) animated:YES];
+        [[UIApplication sharedApplication] setStatusBarStyle:(UIStatusBarStyleLightContent)];
+        [self fullScreenToChangePlayButtonBounds];
+    } completion:^(BOOL finished) {
+        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:(UIStatusBarAnimationFade)];
+        self.fullScreenButton.hidden = YES;
+        self.shrinkScreenButton.hidden = NO;
+    }];
 }
 - (void)showInView:(UIView *)view {
     
     [view addSubview:self];
-    self.alpha = 0.0;
-    [UIView animateWithDuration:kVideoPlayerControllerAnimationTimeInterval animations:^{
-        self.alpha = 1.0;
+    
+    self.isFullscreenMode = NO;
+    [UIView animateWithDuration:kVideoControlAnimationTimeInterval animations:^{
+        [self setTransform:CGAffineTransformIdentity];
+        self.frame = self.originFrame;
+        [[UIApplication sharedApplication] setStatusBarOrientation:(UIInterfaceOrientationPortrait) animated:YES];
+        [[UIApplication sharedApplication] setStatusBarStyle:(UIStatusBarStyleDefault)];
+        [self fullScreenToChangePlayButtonBounds];
     } completion:^(BOOL finished) {
-        
+        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:(UIStatusBarAnimationFade)];
+        self.fullScreenButton.hidden = NO;
+        self.shrinkScreenButton.hidden = YES;
     }];
     
 }
