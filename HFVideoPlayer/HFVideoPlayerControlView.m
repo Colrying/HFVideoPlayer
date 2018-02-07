@@ -249,15 +249,21 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
 
 - (void)progressSliderTouchBegan:(UISlider *)slider {
     [self cancelAutoFadeOutControlBar];
+    if ([self.delegate respondsToSelector:@selector(videoPlayerControlDidSliderTouchBegin:)]) {
+        [self.delegate videoPlayerControlDidSliderTouchBegin:self];
+    }
 }
 
 - (void)progressSliderTouchEnded:(UISlider *)slider {
     [self autoFadeOutControlBar];
+    if ([self.delegate respondsToSelector:@selector(videoPlayerControlDidSliderTouchEnd:)]) {
+        [self.delegate videoPlayerControlDidSliderTouchEnd:self];
+    }
 }
 
 - (void)progressSliderValueChanged:(UISlider *)slider {
-    if ([self.delegate respondsToSelector:@selector(videoPlayerControlDidChangeProgressValue:)]) {
-        [self.delegate videoPlayerControlDidChangeProgressValue:self];
+    if ([self.delegate respondsToSelector:@selector(videoPlayerControlDidChangeProgressValue:progress:)]) {
+        [self.delegate videoPlayerControlDidChangeProgressValue:self progress:slider.value];
     }
 }
 
@@ -274,7 +280,7 @@ static const CGFloat kVideoPlayerControllerAnimationTimeInterval = 0.3f;
 }
 
 #pragma mark ===== 手势滑动 =====
--(BOOL)gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldReceiveTouch:(UITouch*)touch{
+-(BOOL)gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldReceiveTouch:(UITouch*)touch {
     
     if([touch.view isKindOfClass:[UISlider class]]){
         return NO;

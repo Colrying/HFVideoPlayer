@@ -75,8 +75,17 @@
     NSLog(@"取消全屏");
     [videoPlayerController showInView:self.view];
 }
-- (void)videoPlayerControlDidChangeProgressValue:(HFVideoPlayerControlView *)videoPlayerController {
-    NSLog(@"改变进度");
+
+- (void)videoPlayerControlDidSliderTouchBegin:(HFVideoPlayerControlView *)videoPlayerController {
+    NSLog(@"开始触摸滑块");
+}
+
+- (void)videoPlayerControlDidSliderTouchEnd:(HFVideoPlayerControlView *)videoPlayerController {
+    NSLog(@"结束触摸滑块");
+}
+
+- (void)videoPlayerControlDidChangeProgressValue:(HFVideoPlayerControlView *)videoPlayerController progress:(CGFloat)progress {
+    NSLog(@"改变进度%f", progress);
 }
 
 -(void)videoPlayerControlDidChangeVolumeUp:(HFVideoPlayerControlView *)videoPlayerController {

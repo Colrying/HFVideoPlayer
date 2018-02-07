@@ -17,7 +17,9 @@
 - (void)videoPlayerControlDidPauseClick:(HFVideoPlayerControlView *)videoPlayerController;
 - (void)videoPlayerControlDidEnterFullScreenClick:(HFVideoPlayerControlView *)videoPlayerController;
 - (void)videoPlayerControlDidShrinkFullScreenClick:(HFVideoPlayerControlView *)videoPlayerController;
-- (void)videoPlayerControlDidChangeProgressValue:(HFVideoPlayerControlView *)videoPlayerController;
+- (void)videoPlayerControlDidSliderTouchBegin:(HFVideoPlayerControlView *)videoPlayerController;
+- (void)videoPlayerControlDidSliderTouchEnd:(HFVideoPlayerControlView *)videoPlayerController;
+- (void)videoPlayerControlDidChangeProgressValue:(HFVideoPlayerControlView *)videoPlayerController progress:(CGFloat)progress;
 - (void)videoPlayerControlDidChangeVolumeUp:(HFVideoPlayerControlView *)videoPlayerController;
 - (void)videoPlayerControlDidChangeVolumeDown:(HFVideoPlayerControlView *)videoPlayerController;
 - (void)videoPlayerControlDidChangeBrightnessUp:(HFVideoPlayerControlView *)videoPlayerController;
